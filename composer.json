@@ -13,15 +13,15 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=8.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.*",
-        "php-coveralls/php-coveralls": "^1.1"
+        "phpunit/phpunit": "^11.0",
+        "php-coveralls/php-coveralls": "^2.7"
     },
     "autoload": {
-        "psr-0": {
-            "BusinessDays\\": "src"
+        "psr-4": {
+            "BusinessDays\\": "src/BusinessDays"
         }
     }
 }

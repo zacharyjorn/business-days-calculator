@@ -2,12 +2,6 @@
 
 namespace BusinessDays;
 
-
-/**
- * Class Calculator
- *
- * @package BusinessDays
- */
 class Calculator
 {
     const MONDAY    = 1;
@@ -22,89 +16,62 @@ class Calculator
     const HOLIDAY_FORMAT  = 'm-d';
     const FREE_DAY_FORMAT = 'Y-m-d';
 
-    /** @var \DateTime */
-    private $date;
+    private ?\DateTime $date = null;
 
     /** @var \DateTime[] */
-    private $holidays = array();
+    private array $holidays = [];
 
     /** @var \DateTime[] */
-    private $freeDays = array();
+    private array $freeDays = [];
 
     /** @var int[] */
-    private $freeWeekDays = array();
+    private array $freeWeekDays = [];
 
-    /**
-     * @param \DateTime $startDate Date to start calculations from
-     *
-     * @return $this
-     */
-    public function setStartDate(\DateTime $startDate)
+    public function setStartDate(\DateTime $startDate): static
     {
-        // Use clone so parameter is not passed as a reference.
-        // If not, it can brake caller method by changing $startDate parameter while changing it here.
-
         $this->date = clone $startDate;
 
         return $this;
     }
 
-    /**
-     * @param \DateTime[] $holidays Array of holidays that repeats each year. (Only month and date is used to match).
-     *
-     * @return $this
-     */
-    public function setHolidays(array $holidays)
+    /** @param \DateTime[] $holidays */
+    public function setHolidays(array $holidays): static
     {
         $this->holidays = $holidays;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime[]
-     */
-    private function getHolidays()
+    /** @return \DateTime[] */
+    private function getHolidays(): array
     {
         return $this->holidays;
     }
 
-    /**
-     * @param \DateTime[] $freeDays Array of free days that dose not repeat.
-     *
-     * @return $this
-     */
-    public function setFreeDays(array $freeDays)
+    /** @param \DateTime[] $freeDays */
+    public function setFreeDays(array $freeDays): static
     {
         $this->freeDays = $freeDays;
 
         return $this;
     }
 
-    /**
-     * @return \DateTime[]
-     */
-    private function getFreeDays()
+    /** @return \DateTime[] */
+    private function getFreeDays(): array
     {
         return $this->freeDays;
     }
 
-    /**
-     * @param int[] $freeWeekDays Array of days of the week which are not business days.
-     *
-     * @return $this
-     */
-    public function setFreeWeekDays(array $freeWeekDays)
+    /** @param int[] $freeWeekDays */
+    public function setFreeWeekDays(array $freeWeekDays): static
     {
         $this->freeWeekDays = $freeWeekDays;
 
         return $this;
     }
 
-    /**
-     * @return int[]
-     */
-    private function getFreeWeekDays()
+    /** @return int[] */
+    private function getFreeWeekDays(): array
     {
         if (count($this->freeWeekDays) >= 7) {
             throw new \InvalidArgumentException('Too many non business days provided');
@@ -113,12 +80,7 @@ class Calculator
         return $this->freeWeekDays;
     }
 
-    /**
-     * @param int $howManyDays
-     *
-     * @return $this
-     */
-    public function addBusinessDays($howManyDays)
+    public function addBusinessDays(int $howManyDays): static
     {
         $iterator = 0;
         while ($iterator < $howManyDays) {
@@ -131,10 +93,7 @@ class Calculator
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): \DateTime
     {
         if ($this->date === null) {
             $this->date = new \DateTime();
@@ -143,12 +102,7 @@ class Calculator
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return bool
-     */
-    public function isBusinessDay(\DateTime $date)
+    public function isBusinessDay(\DateTime $date): bool
     {
         if ($this->isFreeWeekDayDay($date)) {
             return false;
@@ -165,32 +119,18 @@ class Calculator
         return true;
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return bool
-     */
-    public function isFreeWeekDayDay(\DateTime $date)
+    public function isFreeWeekDayDay(\DateTime $date): bool
     {
-        $currentWeekDay = (int)$date->format(self::WEEK_DAY_FORMAT);
+        $currentWeekDay = (int) $date->format(self::WEEK_DAY_FORMAT);
 
-        if (in_array($currentWeekDay, $this->getFreeWeekDays())) {
-            return true;
-        }
-
-        return false;
+        return in_array($currentWeekDay, $this->getFreeWeekDays(), strict: true);
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return bool
-     */
-    public function isHoliday(\DateTime $date)
+    public function isHoliday(\DateTime $date): bool
     {
         $holidayFormatValue = $date->format(self::HOLIDAY_FORMAT);
         foreach ($this->getHolidays() as $holiday) {
-            if ($holidayFormatValue == $holiday->format(self::HOLIDAY_FORMAT)) {
+            if ($holidayFormatValue === $holiday->format(self::HOLIDAY_FORMAT)) {
                 return true;
             }
         }
@@ -198,16 +138,11 @@ class Calculator
         return false;
     }
 
-    /**
-     * @param \DateTime $date
-     *
-     * @return bool
-     */
-    public function isFreeDay(\DateTime $date)
+    public function isFreeDay(\DateTime $date): bool
     {
         $freeDayFormatValue = $date->format(self::FREE_DAY_FORMAT);
         foreach ($this->getFreeDays() as $freeDay) {
-            if ($freeDayFormatValue == $freeDay->format(self::FREE_DAY_FORMAT)) {
+            if ($freeDayFormatValue === $freeDay->format(self::FREE_DAY_FORMAT)) {
                 return true;
             }
         }

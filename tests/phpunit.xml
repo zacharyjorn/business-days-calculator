@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit colors="true" bootstrap="../vendor/autoload.php" strict="true">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd"
+         bootstrap="../vendor/autoload.php"
+         colors="true">
     <testsuites>
         <testsuite name="app">
             <directory>BusinessDays</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <blacklist>
-            <directory>../../tests</directory>
-            <directory>../../vendor</directory>
-        </blacklist>
-    </filter>
-    <logging>
-        <log type="coverage-html" target="coverage" charset="UTF-8"/>
-        <log type="coverage-clover" target="../build/logs/clover.xml"/>
-    </logging>
+    <source>
+        <include>
+            <directory suffix=".php">../../src</directory>
+        </include>
+    </source>
+    <coverage>
+        <report>
+            <html outputDirectory="coverage"/>
+            <clover outputFile="../build/logs/clover.xml"/>
+        </report>
+    </coverage>
 </phpunit>

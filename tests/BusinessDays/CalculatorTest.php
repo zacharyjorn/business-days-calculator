@@ -2,27 +2,18 @@
 namespace Tests;
 
 use BusinessDays\Calculator;
+use PHPUnit\Framework\TestCase;
 
-
-/**
- * Class CalculatorTest
- *
- * @package Tests
- */
-class CalculatorTest extends \PHPUnit_Framework_TestCase
+class CalculatorTest extends TestCase
 {
-    /** @var Calculator */
-    private $_sut;
+    private Calculator $_sut;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->_sut = new Calculator();
     }
 
-    /**
-     * @return array
-     */
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return include __DIR__ . '/fixtures/business_days.php';
     }
@@ -30,23 +21,19 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProvider
      *
-     * @param string      $message
-     * @param \DateTime   $startDate
-     * @param int         $howManyDays
-     * @param \DateTime   $expected
      * @param int[]       $nonBusinessDays
      * @param \DateTime[] $freeDays
      * @param \DateTime[] $holidays
      */
     public function testReturnsExpected(
-        $message,
+        string $message,
         \DateTime $startDate,
-        $howManyDays,
+        int $howManyDays,
         \DateTime $expected,
-        array $nonBusinessDays = array(),
-        array $freeDays = array(),
-        array $holidays = array()
-    ) {
+        array $nonBusinessDays = [],
+        array $freeDays = [],
+        array $holidays = []
+    ): void {
         $this->_sut->setFreeDays($freeDays);
         $this->_sut->setHolidays($holidays);
         $this->_sut->setFreeWeekDays($nonBusinessDays);
@@ -55,14 +42,13 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->_sut->getDate();
 
-        $this->assertEquals($response, $expected, $message);
+        $this->assertEquals($expected, $response, $message);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testTooManyBusinessDaysException()
+    public function testTooManyBusinessDaysException(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $nonBusinessDays = [
             Calculator::MONDAY,
             Calculator::TUESDAY,
@@ -70,7 +56,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
             Calculator::THURSDAY,
             Calculator::FRIDAY,
             Calculator::SATURDAY,
-            Calculator::SUNDAY
+            Calculator::SUNDAY,
         ];
 
         $this->_sut->setFreeWeekDays($nonBusinessDays);
@@ -78,7 +64,7 @@ class CalculatorTest extends \PHPUnit_Framework_TestCase
         $this->_sut->getDate();
     }
 
-    public function testThatPassedParameterIsNotChangedByReferenceInSut()
+    public function testThatPassedParameterIsNotChangedByReferenceInSut(): void
     {
         $date = new \DateTime('2000-01-01');
 
